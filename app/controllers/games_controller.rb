@@ -12,9 +12,10 @@ class GamesController < ApplicationController
     url = "https://wagon-dictionary.herokuapp.com/#{@word}"
     api_serialized = open(url).read
     api = JSON.parse(api_serialized)
+    @counter = 0
 
     if api["found"] == true
-      @counter = 0
+
       @word.split('').each do |c|
         if params["letters"].split('').include? "#{c}"
           params["letters"].split('').each do |el|
@@ -28,9 +29,17 @@ class GamesController < ApplicationController
           @answer = "The word can't be built out of the original grid"
         end
       end
+
     else
       @answer = "It's not a valid English word"
       @counter = 0
     end
+
+    if session["score"].nil?
+      session["score"] = @counter
+    else
+      session["score"] += @counter
+    end
+    @session = session["score"]
   end
 end
